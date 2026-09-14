@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Carte des boissons — CAFEDET</title>
+<meta name="description" content="La carte des boissons du CAFEDET, Fédération des Étudiants Toulonnais.">
+<meta name="theme-color" content="#F4F5F8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F4F5F8;
+  --ink:#0A0A0A;
+  --blue:#2B2BD4;
+  --navy:#1B3B6F;
+  --rule:#4B3FD1;
+  --muted:#4A4A52;
+  --line:#D8DAE2;
+  --ok:#1C7C4A;
+  --danger:#B3261E;
+  --display:'Oswald',system-ui,sans-serif;
+  --body:'Poppins',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-weight:300;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+a{color:var(--blue)}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+/* ---------- filigrane verre ---------- */
+.watermark{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;overflow:hidden}
+.watermark svg{width:min(90vw,620px);height:auto;opacity:.5}
+
+.wrap{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:28px 20px 56px}
+
+/* ---------- en-tête ---------- */
+.masthead{text-align:center;padding:8px 0 22px}
+.masthead h1{
+  font-family:var(--display);font-weight:700;text-transform:uppercase;
+  font-size:clamp(1.9rem,8.2vw,4.2rem);line-height:.95;letter-spacing:.01em;
+  margin:0;display:flex;align-items:center;justify-content:center;gap:.35em;
+}
+.masthead h1::before,.masthead h1::after{content:"";height:.09em;width:.28em;background:var(--ink);border-radius:2px}
+.masthead .brand{
+  font-family:var(--display);font-weight:600;color:var(--blue);
+  font-size:clamp(1rem,4.4vw,2rem);letter-spacing:.42em;text-indent:.42em;margin-top:.35em;
+}
+
+/* ---------- barre de navigation ---------- */
+.jump{
+  position:sticky;top:0;z-index:5;display:flex;gap:8px;overflow-x:auto;
+  padding:10px 20px;margin:0 -20px 26px;
+  background:color-mix(in srgb,var(--paper) 88%,transparent);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);scrollbar-width:none;
+}
+.jump::-webkit-scrollbar{display:none}
+.jump a{
+  flex:0 0 auto;font-family:var(--display);font-size:.72rem;letter-spacing:.14em;
+  text-transform:uppercase;text-decoration:none;color:var(--ink);
+  border:1px solid var(--line);border-radius:999px;padding:7px 14px;background:#fff;
+}
+.jump a.on{border-color:var(--blue);color:var(--blue)}
+
+/* ---------- carte ---------- */
+.menu{columns:1;column-gap:64px}
+@media(min-width:820px){.menu{columns:2}}
+.cat{break-inside:avoid;margin:0 0 44px;scroll-margin-top:72px}
+.cat h2{
+  font-family:var(--display);font-weight:600;text-transform:uppercase;text-align:center;
+  font-size:clamp(1.15rem,4.6vw,1.6rem);letter-spacing:.24em;text-indent:.24em;margin:0 0 14px;
+}
+.cat h2 span{white-space:nowrap}
+.cat h2::before,.cat h2::after{content:"-";margin:0 .35em;color:var(--ink)}
+.cat .rule{height:1.5px;background:var(--rule);margin:0 0 20px}
+.item{margin:0 0 20px;padding-left:6px}
+.item .row{display:flex;align-items:baseline;gap:12px}
+.item .name{
+  font-family:var(--display);font-weight:500;text-transform:uppercase;
+  font-size:.98rem;letter-spacing:.14em;flex:1 1 auto;
+}
+.item .price{font-family:var(--display);font-weight:600;font-size:1rem;letter-spacing:.04em;white-space:nowrap}
+.item .desc{margin:5px 0 0;font-size:.85rem;line-height:1.5;color:var(--muted);max-width:34em}
+.item.noname .row{justify-content:space-between}
+.item.noname .desc{margin-top:0}
+
+/* ---------- pied ---------- */
+.foot{text-align:center;margin-top:24px;padding-top:28px;border-top:1px solid var(--line)}
+.foot .logo{width:150px;height:auto;margin:0 auto 10px;display:block}
+.foot .legal{font-size:.72rem;color:var(--muted);line-height:1.7;margin:6px 0 0}
+.foot .adminlink{display:inline-block;margin-top:14px;font-size:.72rem;color:var(--muted);text-decoration:none;letter-spacing:.08em}
+.foot .adminlink:hover{color:var(--blue)}
+
+/* ---------- admin ---------- */
+.admin{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:28px 20px 64px}
+.admin h1{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.12em;font-size:1.7rem;margin:0}
+.admin .sub{color:var(--muted);font-size:.85rem;margin:6px 0 24px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;margin:0 0 18px}
+.panel h3{font-family:var(--display);font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:.85rem;margin:0 0 14px}
+label{display:block;font-size:.76rem;letter-spacing:.06em;color:var(--muted);margin:0 0 5px}
+input[type=text],input[type=password],textarea{
+  width:100%;font-family:var(--body);font-size:.9rem;font-weight:300;color:var(--ink);
+  background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:9px 11px;
+}
+textarea{min-height:110px;resize:vertical;font-size:.78rem;line-height:1.5}
+button{
+  font-family:var(--display);font-weight:500;letter-spacing:.1em;text-transform:uppercase;font-size:.74rem;
+  border:1px solid var(--ink);background:var(--ink);color:#fff;border-radius:7px;padding:9px 15px;cursor:pointer;
+}
+button.ghost{background:transparent;color:var(--ink)}
+button.blue{background:var(--blue);border-color:var(--blue)}
+button.danger{background:transparent;border-color:var(--danger);color:var(--danger)}
+button.mini{padding:5px 9px;font-size:.66rem;border-radius:6px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.catbox{border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px;background:var(--paper)}
+.catbox .head{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.catbox .head input{font-family:var(--display);letter-spacing:.12em;text-transform:uppercase;font-size:.85rem;background:#fff}
+.itembox{display:grid;grid-template-columns:1fr 92px auto;gap:8px;align-items:start;margin:0 0 9px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px}
+.itembox .full{grid-column:1/-1}
+.itembox input{background:var(--paper)}
+@media(max-width:560px){.itembox{grid-template-columns:1fr 84px auto}}
+.status{font-size:.76rem;color:var(--ok);min-height:1.2em;letter-spacing:.04em}
+.hint{font-size:.76rem;color:var(--muted);line-height:1.6;margin:10px 0 0}
+#qr{display:flex;justify-content:center;padding:16px;background:#fff;border-radius:10px}
+#qr img,#qr canvas{display:block;width:200px;height:200px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.hidden{display:none !important}
+@media print{.jump,.adminlink,.watermark{display:none}body{background:#fff}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="watermark" aria-hidden="true">
+  <svg viewBox="0 0 400 520" fill="none" stroke="#0A0A0A" stroke-opacity=".07" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M60 120 L200 300 L340 120 Z"/>
+    <path d="M200 300 L200 445"/>
+    <path d="M140 465 Q200 440 260 465 Q200 480 140 465 Z"/>
+    <path d="M60 120 C130 96 270 96 340 120"/>
+    <path d="M96 155 C170 300 60 360 130 420 C180 462 300 430 320 360"/>
+  </svg>
+</div>
+
+<!-- ====================== CARTE PUBLIQUE ====================== -->
+<main id="view-menu" class="wrap">
+  <header class="masthead">
+    <h1>Carte des boissons</h1>
+    <div class="brand">CAFEDET</div>
+  </header>
+
+  <nav class="jump" id="jump" aria-label="Catégories"></nav>
+
+  <div class="menu" id="menu"></div>
+
+  <footer class="foot">
+    <div id="logoSlot"></div>
+    <p class="legal">Fédération des Étudiants Toulonnais<br>
+    L'abus d'alcool est dangereux pour la santé. Vente interdite aux mineurs.</p>
+    <a class="adminlink" href="#admin">Espace gestion</a>
+  </footer>
+</main>
+
+<!-- ====================== ADMIN ====================== -->
+<main id="view-admin" class="admin hidden">
+
+  <div id="gate">
+    <div class="topbar">
+      <h1>Espace gestion</h1>
+      <a href="#" style="font-size:.78rem;text-decoration:none">Retour à la carte</a>
+    </div>
+    <div class="panel" style="max-width:360px">
+      <h3>Connexion</h3>
+      <label for="pw">Mot de passe</label>
+      <input type="password" id="pw" autocomplete="current-password">
+      <div class="btns" style="margin-top:12px"><button class="blue" id="loginBtn">Se connecter</button></div>
+      <p class="hint" id="pwErr" style="color:var(--danger);display:none">Mot de passe incorrect.</p>
+    </div>
+  </div>
+
+  <div id="editor" class="hidden">
+    <div class="topbar">
+      <h1>Espace gestion</h1>
+      <div class="btns">
+        <a href="#" style="text-decoration:none"><button class="ghost">Voir la carte</button></a>
+        <button class="ghost" id="logoutBtn">Se déconnecter</button>
+      </div>
+    </div>
+    <p class="sub">Les modifications sont enregistrées automatiquement. <span class="status" id="status"></span></p>
+
+    <div class="panel">
+      <h3>QR-Code de la carte</h3>
+      <div id="qr"></div>
+      <label for="qrUrl" style="margin-top:14px">Adresse encodée dans le QR-Code</label>
+      <input type="text" id="qrUrl">
+      <div class="btns" style="margin-top:10px">
+        <button class="ghost mini" id="qrGen">Régénérer</button>
+        <button class="ghost mini" id="qrPrint">Imprimer</button>
+      </div>
+      <p class="hint">Colle ici l'adresse publique de la page une fois hébergée, régénère, puis imprime le QR-Code pour les tables.</p>
+    </div>
+
+    <div class="panel">
+      <h3>Catégories et articles</h3>
+      <div id="cats"></div>
+      <div class="btns"><button class="blue" id="addCat">Ajouter une catégorie</button></div>
+    </div>
+
+    <div class="panel">
+      <h3>Logo</h3>
+      <label for="logoUrl">Adresse d'une image (laisse vide pour le logo intégré)</label>
+      <input type="text" id="logoUrl" placeholder="logo-fedet.png">
+      <div class="btns" style="margin-top:10px">
+        <button class="ghost mini" id="logoFileBtn">Choisir un fichier</button>
+        <button class="ghost mini" id="logoReset">Remettre le logo intégré</button>
+      </div>
+      <input type="file" id="logoFile" accept="image/*" class="hidden">
+    </div>
+
+    <div class="panel">
+      <h3>Sauvegarde</h3>
+      <div class="btns">
+        <button class="ghost mini" id="exportBtn">Copier la carte en JSON</button>
+        <button class="ghost mini" id="importBtn">Remplacer par le JSON ci-dessous</button>
+        <button class="danger mini" id="resetBtn">Revenir à la carte d'origine</button>
+      </div>
+      <textarea id="json" style="margin-top:12px" spellcheck="false"></textarea>
+      <p class="hint">Pour figer la carte dans le fichier hébergé : copie le JSON et remplace la valeur de <code>DEFAULT_MENU</code> dans le code source. Utile si la page est servie en statique sur plusieurs appareils.</p>
+    </div>
+  </div>
+</main>
+
+<script>
+/* =========================================================
+   1. Configuration
+   ========================================================= */
+const ADMIN_PASSWORD = "cafedet2026";   // à changer ici
+const KEY = "cafedet:menu:v1";
+
+const DEFAULT_MENU = {
+  logo: "",
+  categories: [
+    { id:"softs", name:"Softs", items:[
+      { id:"i1", name:"Soda 33cl", price:"2", desc:"Coca, zéro, cherry, ice tea, oasis pomme cassis framboise, tropical, orangina, sprite, schweppes" },
+      { id:"i2", name:"Red Bull", price:"2,5", desc:"" },
+      { id:"i3", name:"Sirop", price:"1", desc:"Grenadine, pêche, menthe, cerise, orgeat, fraise, citron, rose, vanille, noisette" }
+    ]},
+    { id:"bieres", name:"Bières et vins", items:[
+      { id:"i4", name:"Bud", price:"2,5", desc:"" },
+      { id:"i5", name:"Leffe - Leffe Ruby", price:"3", desc:"" },
+      { id:"i6", name:"Desperados", price:"3,5", desc:"" },
+      { id:"i7", name:"La Bête", price:"4,5", desc:"" },
+      { id:"i8", name:"Verre de vin 12cl", price:"2,5", desc:"Blanc, rosé, rouge" },
+      { id:"i9", name:"Prosecco 12cl", price:"4", desc:"" }
+    ]},
+    { id:"bonbons", name:"Bonbons", items:[
+      { id:"i10", name:"", price:"0,50", desc:"Sucette cœur, sucette piquante, boules magiques" }
+    ]},
+    { id:"cocktails", name:"Cocktails", items:[
+      { id:"i11", name:"Athéna", price:"6", desc:"Berry Mojito, limonade, sirop de vanille" },
+      { id:"i12", name:"Dionysos", price:"6", desc:"Vin blanc, crème de cassis, sirop de pêche" },
+      { id:"i13", name:"Perséphone", price:"6", desc:"Soho, manzana, limonade, sirop de cerise" },
+      { id:"i14", name:"Hadès", price:"6", desc:"Jet 27, vodka black, limonade" },
+      { id:"i15", name:"BBQ Chicken", price:"6", desc:"Malibu, multifruit, sirop de fruit rouge" },
+      { id:"i16", name:"Fedet", price:"6", desc:"Manzana, pulco, limonade, curaçao" }
+    ]},
+    { id:"sansalcool", name:"Sans alcool", items:[
+      { id:"i17", name:"PF", price:"4", desc:"Multifruit, limonade, grenadine, sirop de citron" }
+    ]},
+    { id:"shooters", name:"Shooters", items:[
+      { id:"i18", name:"Fedet'Shoot", price:"2", desc:"Shooter au choix" }
+    ]}
+  ]
+};
+
+const LOGO_SVG = `<svg class="logo" viewBox="0 0 240 150" role="img" aria-label="Logo FEDET">
+  <circle cx="120" cy="58" r="44" fill="none" stroke="#1B3B6F" stroke-width="5"/>
+  <path d="M78 74 C96 40 128 22 166 20 C150 36 146 46 144 58 C158 50 172 44 186 44 C168 58 150 78 132 92 C120 101 104 100 96 92 Z" fill="#2B5FA8"/>
+  <path d="M96 92 C104 82 118 72 134 66 C124 82 112 92 100 96 Z" fill="#1B3B6F"/>
+  <text x="120" y="130" text-anchor="middle" font-family="Oswald, sans-serif" font-weight="700" font-size="30" letter-spacing="3" fill="#1B3B6F">FEDET</text>
+  <text x="120" y="144" text-anchor="middle" font-family="Poppins, sans-serif" font-size="8.5" letter-spacing=".6" fill="#1B3B6F">Fédération Des Étudiants Toulonnais</text>
+</svg>`;
+
+/* =========================================================
+   2. Stockage (window.storage si dispo, sinon localStorage)
+   ========================================================= */
+const Store = {
+  async get(k){
+    if (window.storage){
+      try { const r = await window.storage.get(k, true); return r ? r.value : null; }
+      catch(e){ return null; }
+    }
+    try { return localStorage.getItem(k); } catch(e){ return null; }
+  },
+  async set(k,v){
+    if (window.storage){
+      try { await window.storage.set(k, v, true); return true; } catch(e){ return false; }
+    }
+    try { localStorage.setItem(k,v); return true; } catch(e){ return false; }
+  },
+  async del(k){
+    if (window.storage){ try { await window.storage.delete(k, true); } catch(e){} return; }
+    try { localStorage.removeItem(k); } catch(e){}
+  }
+};
+
+let menu = null;
+const uid = () => Math.random().toString(36).slice(2,9);
+const slug = s => (s||"cat").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "cat";
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+async function loadMenu(){
+  const raw = await Store.get(KEY);
+  if (raw){ try { const p = JSON.parse(raw); if (p && Array.isArray(p.categories)) return p; } catch(e){} }
+  return JSON.parse(JSON.stringify(DEFAULT_MENU));
+}
+
+let saveTimer=null;
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    const ok = await Store.set(KEY, JSON.stringify(menu));
+    const s = document.getElementById("status");
+    if (s){ s.textContent = ok ? "Enregistré" : "Échec de l'enregistrement"; s.style.color = ok ? "var(--ok)" : "var(--danger)"; }
+    renderMenu();
+  }, 350);
+}
+
+/* =========================================================
+   3. Rendu de la carte
+   ========================================================= */
+function renderMenu(){
+  const host = document.getElementById("menu");
+  const jump = document.getElementById("jump");
+  host.innerHTML = ""; jump.innerHTML = "";
+
+  if (!menu.categories.length){
+    host.innerHTML = '<p style="color:var(--muted)">La carte est vide. Ajoute une catégorie depuis l\'espace gestion.</p>';
+  }
+
+  menu.categories.forEach(cat => {
+    const anchor = "cat-" + cat.id;
+    const a = document.createElement("a");
+    a.href = "#" + anchor; a.textContent = cat.name; jump.appendChild(a);
+
+    const sec = document.createElement("section");
+    sec.className = "cat"; sec.id = anchor;
+    sec.innerHTML = `<h2><span>${esc(cat.name)}</span></h2><div class="rule"></div>` +
+      cat.items.map(it => {
+        const price = it.price ? esc(it.price) + "€" : "";
+        if (!it.name){
+          return `<div class="item noname"><div class="row"><p class="desc">${esc(it.desc)}</p><span class="price">${price}</span></div></div>`;
+        }
+        return `<div class="item"><div class="row"><span class="name">${esc(it.name)}</span><span class="price">${price}</span></div>` +
+               (it.desc ? `<p class="desc">${esc(it.desc)}</p>` : "") + `</div>`;
+      }).join("");
+    host.appendChild(sec);
+  });
+
+  const slot = document.getElementById("logoSlot");
+  slot.innerHTML = menu.logo
+    ? `<img class="logo" src="${esc(menu.logo)}" alt="Logo FEDET">`
+    : LOGO_SVG;
+
+  markActive();
+}
+
+function markActive(){
+  const links = [...document.querySelectorAll("#jump a")];
+  if (!links.length) return;
+  const y = window.scrollY + 120;
+  let cur = links[0];
+  document.querySelectorAll(".cat").forEach(sec => { if (sec.offsetTop <= y){ const l = links.find(x => x.getAttribute("href") === "#"+sec.id); if (l) cur = l; } });
+  links.forEach(l => l.classList.toggle("on", l === cur));
+}
+window.addEventListener("scroll", () => { if (!document.getElementById("view-menu").classList.contains("hidden")) markActive(); }, {passive:true});
+
+/* =========================================================
+   4. Éditeur
+   ========================================================= */
+function renderAdmin(){
+  const host = document.getElementById("cats");
+  host.innerHTML = "";
+
+  menu.categories.forEach((cat, ci) => {
+    const box = document.createElement("div");
+    box.className = "catbox";
+    box.innerHTML = `
+      <div class="head">
+        <input type="text" value="${esc(cat.name)}" data-act="catname" aria-label="Nom de la catégorie">
+        <button class="ghost mini" data-act="up" ${ci===0?"disabled":""} aria-label="Monter">▲</button>
+        <button class="ghost mini" data-act="down" ${ci===menu.categories.length-1?"disabled":""} aria-label="Descendre">▼</button>
+        <button class="danger mini" data-act="delcat">Supprimer</button>
+      </div>
+      <div class="items"></div>
+      <div class="btns"><button class="ghost mini" data-act="additem">Ajouter un article</button></div>`;
+
+    const items = box.querySelector(".items");
+    cat.items.forEach(it => {
+      const row = document.createElement("div");
+      row.className = "itembox";
+      row.innerHTML = `
+        <input type="text" value="${esc(it.name)}" placeholder="Nom de l'article" data-f="name" aria-label="Nom">
+        <input type="text" value="${esc(it.price)}" placeholder="Prix" data-f="price" aria-label="Prix en euros">
+        <button class="danger mini" data-act="delitem">✕</button>
+        <input class="full" type="text" value="${esc(it.desc)}" placeholder="Description (facultatif)" data-f="desc" aria-label="Description">`;
+      row.querySelectorAll("input").forEach(inp => {
+        inp.addEventListener("input", () => { it[inp.dataset.f] = inp.value; save(); });
+      });
+      row.querySelector('[data-act="delitem"]').addEventListener("click", () => {
+        cat.items = cat.items.filter(x => x.id !== it.id); save(); renderAdmin();
+      });
+      items.appendChild(row);
+    });
+
+    box.querySelector('[data-act="catname"]').addEventListener("input", e => {
+      cat.name = e.target.value; cat.id = slug(e.target.value) + "-" + cat.id.split("-").pop(); save();
+    });
+    box.querySelector('[data-act="additem"]').addEventListener("click", () => {
+      cat.items.push({ id:uid(), name:"", price:"", desc:"" }); save(); renderAdmin();
+    });
+    box.querySelector('[data-act="delcat"]').addEventListener("click", () => {
+      if (!confirm(`Supprimer la catégorie « ${cat.name} » et ses articles ?`)) return;
+      menu.categories.splice(ci,1); save(); renderAdmin();
+    });
+    box.querySelector('[data-act="up"]').addEventListener("click", () => {
+      [menu.categories[ci-1], menu.categories[ci]] = [menu.categories[ci], menu.categories[ci-1]]; save(); renderAdmin();
+    });
+    box.querySelector('[data-act="down"]').addEventListener("click", () => {
+      [menu.categories[ci+1], menu.categories[ci]] = [menu.categories[ci], menu.categories[ci+1]]; save(); renderAdmin();
+    });
+    host.appendChild(box);
+  });
+
+  document.getElementById("json").value = JSON.stringify(menu, null, 2);
+  document.getElementById("logoUrl").value = menu.logo && menu.logo.startsWith("data:") ? "" : (menu.logo || "");
+}
+
+/* =========================================================
+   5. Actions admin
+   ========================================================= */
+function wireAdmin(){
+  document.getElementById("addCat").addEventListener("click", () => {
+    menu.categories.push({ id: slug("categorie")+"-"+uid(), name:"Nouvelle catégorie", items:[] });
+    save(); renderAdmin();
+  });
+
+  document.getElementById("exportBtn").addEventListener("click", async () => {
+    const t = document.getElementById("json"); t.value = JSON.stringify(menu, null, 2);
+    t.select();
+    try { await navigator.clipboard.writeText(t.value); flash("JSON copié"); }
+    catch(e){ document.execCommand("copy"); flash("JSON copié"); }
+  });
+
+  document.getElementById("importBtn").addEventListener("click", () => {
+    try {
+      const p = JSON.parse(document.getElementById("json").value);
+      if (!p || !Array.isArray(p.categories)) throw new Error("format");
+      menu = p; save(); renderAdmin(); flash("Carte remplacée");
+    } catch(e){ flash("JSON invalide : vérifie les virgules et les accolades.", true); }
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", async () => {
+    if (!confirm("Revenir à la carte d'origine ? Les modifications seront perdues.")) return;
+    menu = JSON.parse(JSON.stringify(DEFAULT_MENU));
+    await Store.set(KEY, JSON.stringify(menu));
+    renderAdmin(); renderMenu(); flash("Carte d'origine restaurée");
+  });
+
+  document.getElementById("logoUrl").addEventListener("input", e => { menu.logo = e.target.value.trim(); save(); });
+  document.getElementById("logoFileBtn").addEventListener("click", () => document.getElementById("logoFile").click());
+  document.getElementById("logoFile").addEventListener("change", e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => { menu.logo = r.result; save(); flash("Logo mis à jour"); };
+    r.readAsDataURL(f);
+  });
+  document.getElementById("logoReset").addEventListener("click", () => {
+    menu.logo = ""; document.getElementById("logoUrl").value = ""; save(); flash("Logo intégré rétabli");
+  });
+
+  document.getElementById("qrGen").addEventListener("click", makeQR);
+  document.getElementById("qrPrint").addEventListener("click", printQR);
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    sessionStorage.removeItem("cafedet:auth"); location.hash = ""; route();
+  });
+}
+
+function flash(msg, bad){
+  const s = document.getElementById("status");
+  s.textContent = msg; s.style.color = bad ? "var(--danger)" : "var(--ok)";
+}
+
+/* =========================================================
+   6. QR-Code
+   ========================================================= */
+function publicUrl(){ return location.href.split("#")[0]; }
+
+function makeQR(){
+  const url = document.getElementById("qrUrl").value.trim() || publicUrl();
+  const box = document.getElementById("qr");
+  box.innerHTML = "";
+  if (window.QRCode){
+    new QRCode(box, { text:url, width:200, height:200, colorDark:"#0A0A0A", colorLight:"#ffffff", correctLevel:QRCode.CorrectLevel.M });
+  } else {
+    const img = document.createElement("img");
+    img.alt = "QR-Code vers la carte";
+    img.src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(url);
+    box.appendChild(img);
+  }
+}
+
+function printQR(){
+  const box = document.getElementById("qr");
+  const node = box.querySelector("img[src^='data:'], img, canvas");
+  let src = "";
+  if (node && node.tagName === "CANVAS") src = node.toDataURL();
+  else if (node) src = node.src;
+  const w = window.open("", "_blank");
+  w.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>QR-Code CAFEDET</title>
+  <style>body{font-family:sans-serif;text-align:center;padding:60px}img{width:320px;height:320px}
+  h1{font-size:22px;letter-spacing:.2em;text-transform:uppercase}p{color:#444}</style></head>
+  <body><h1>Carte des boissons</h1><img src="${src}" alt="QR-Code"><p>Scannez pour voir la carte du CAFEDET</p></body></html>`);
+  w.document.close(); w.focus(); setTimeout(() => w.print(), 400);
+}
+
+/* =========================================================
+   7. Routage
+   ========================================================= */
+function route(){
+  const admin = location.hash === "#admin";
+  document.getElementById("view-menu").classList.toggle("hidden", admin);
+  document.getElementById("view-admin").classList.toggle("hidden", !admin);
+  if (!admin) return;
+  const authed = sessionStorage.getItem("cafedet:auth") === "1";
+  document.getElementById("gate").classList.toggle("hidden", authed);
+  document.getElementById("editor").classList.toggle("hidden", !authed);
+  if (authed){
+    renderAdmin();
+    document.getElementById("qrUrl").value = document.getElementById("qrUrl").value || publicUrl();
+    makeQR();
+  } else {
+    document.getElementById("pw").focus();
+  }
+}
+window.addEventListener("hashchange", route);
+
+function wireGate(){
+  const go = () => {
+    if (document.getElementById("pw").value === ADMIN_PASSWORD){
+      sessionStorage.setItem("cafedet:auth","1");
+      document.getElementById("pwErr").style.display = "none";
+      document.getElementById("pw").value = "";
+      route();
+    } else {
+      document.getElementById("pwErr").style.display = "block";
+    }
+  };
+  document.getElementById("loginBtn").addEventListener("click", go);
+  document.getElementById("pw").addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+}
+
+/* =========================================================
+   8. Démarrage
+   ========================================================= */
+(async function init(){
+  menu = await loadMenu();
+  renderMenu();
+  wireGate();
+  wireAdmin();
+  route();
+  const s = document.createElement("script");
+  s.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+  s.onload = () => { if (location.hash === "#admin") makeQR(); };
+  document.head.appendChild(s);
+})();
+</script>
+</body>
+</html>
