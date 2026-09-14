@@ -7,7 +7,7 @@
   "scripts": {
     "secrets": "node scripts/setup-secrets.mjs"
   },
-  "engines": { "node": "22.x" }
-    "node": ">=20"
+  "engines": {
+    "node": "22.x"
   }
 }
