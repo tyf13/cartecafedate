@@ -1,0 +1,13 @@
+{
+  "name": "cafedet-carte",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Carte des boissons du CAFEDET — page publique scannable par QR-Code et espace de gestion authentifie.",
+  "scripts": {
+    "secrets": "node scripts/setup-secrets.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

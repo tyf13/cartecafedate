@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Carte des boissons — CAFEDET</title>
+<meta name="description" content="La carte des boissons du CAFEDET, Fédération des Étudiants Toulonnais.">
+<meta name="theme-color" content="#F4F5F8">
+<meta name="robots" content="index, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<div class="watermark" aria-hidden="true">
+  <svg viewBox="0 0 400 520" fill="none" stroke="#0A0A0A" stroke-opacity=".07" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M60 120 L200 300 L340 120 Z"/>
+    <path d="M200 300 L200 445"/>
+    <path d="M140 465 Q200 440 260 465 Q200 480 140 465 Z"/>
+    <path d="M60 120 C130 96 270 96 340 120"/>
+    <path d="M96 155 C170 300 60 360 130 420 C180 462 300 430 320 360"/>
+  </svg>
+</div>
+
+<!-- ====================== CARTE PUBLIQUE ====================== -->
+<main id="view-menu" class="wrap">
+  <header class="masthead">
+    <h1>Carte des boissons</h1>
+    <div class="brand">CAFEDET</div>
+  </header>
+
+  <nav class="jump" id="jump" aria-label="Catégories"></nav>
+
+  <div class="menu" id="menu" aria-busy="true">
+    <p class="loading">Chargement de la carte…</p>
+  </div>
+
+  <footer class="foot">
+    <div id="logoSlot"></div>
+    <p class="legal">Fédération des Étudiants Toulonnais<br>
+    L'abus d'alcool est dangereux pour la santé. Vente interdite aux mineurs.</p>
+    <a class="adminlink" href="#admin">Espace gestion</a>
+  </footer>
+</main>
+
+<!-- ====================== ADMIN ====================== -->
+<main id="view-admin" class="admin hidden">
+
+  <section id="gate">
+    <div class="topbar">
+      <h1>Espace gestion</h1>
+      <a class="back" href="#">Retour à la carte</a>
+    </div>
+    <div class="panel narrow">
+      <h3>Connexion</h3>
+      <label for="pw">Mot de passe</label>
+      <input type="password" id="pw" autocomplete="current-password" autocapitalize="off" spellcheck="false">
+      <div class="btns"><button class="blue" id="loginBtn" type="button">Se connecter</button></div>
+      <p class="err" id="pwErr" role="alert"></p>
+    </div>
+  </section>
+
+  <section id="editor" class="hidden">
+    <div class="topbar">
+      <h1>Espace gestion</h1>
+      <div class="btns">
+        <a class="back" href="#">Voir la carte</a>
+        <button class="ghost" id="logoutBtn" type="button">Se déconnecter</button>
+      </div>
+    </div>
+    <p class="sub">Les modifications sont enregistrées sur le serveur. <span class="status" id="status" role="status"></span></p>
+
+    <div class="panel">
+      <h3>QR-Code de la carte</h3>
+      <div id="qrBox"><canvas id="qr" width="200" height="200" aria-label="QR-Code vers la carte"></canvas></div>
+      <label for="qrUrl">Adresse encodée dans le QR-Code</label>
+      <input type="text" id="qrUrl" inputmode="url" spellcheck="false">
+      <div class="btns">
+        <button class="ghost mini" id="qrGen" type="button">Régénérer</button>
+        <button class="ghost mini" id="qrPrint" type="button">Imprimer</button>
+      </div>
+      <p class="hint">Adresse publique de la carte. Imprime le QR-Code pour les tables : il reste valable même quand tu modifies les articles.</p>
+    </div>
+
+    <div class="panel">
+      <h3>Catégories et articles</h3>
+      <div id="cats"></div>
+      <div class="btns"><button class="blue" id="addCat" type="button">Ajouter une catégorie</button></div>
+    </div>
+
+    <div class="panel">
+      <h3>Logo</h3>
+      <label for="logoUrl">Adresse d'une image, ou vide pour le logo intégré</label>
+      <input type="text" id="logoUrl" placeholder="/logo-fedet.png" spellcheck="false">
+      <div class="btns">
+        <button class="ghost mini" id="logoFileBtn" type="button">Choisir un fichier</button>
+        <button class="ghost mini" id="logoReset" type="button">Remettre le logo intégré</button>
+      </div>
+      <input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp" class="hidden">
+      <p class="hint">PNG, JPEG ou WebP, 300 Ko maximum. Les SVG ne sont pas acceptés comme image embarquée.</p>
+    </div>
+
+    <div class="panel">
+      <h3>Sauvegarde</h3>
+      <div class="btns">
+        <button class="ghost mini" id="exportBtn" type="button">Copier la carte en JSON</button>
+        <button class="ghost mini" id="importBtn" type="button">Remplacer par le JSON ci-dessous</button>
+        <button class="danger mini" id="resetBtn" type="button">Revenir à la carte d'origine</button>
+      </div>
+      <textarea id="json" spellcheck="false" aria-label="Carte au format JSON"></textarea>
+      <p class="hint">Garde une copie avant une grosse modification. Le serveur revalide tout à l'enregistrement.</p>
+    </div>
+  </section>
+</main>
+
+<div class="printsheet" aria-hidden="true">
+  <h2>Carte des boissons</h2>
+  <img id="printQr" alt="">
+  <p>Scannez pour voir la carte du CAFEDET</p>
+</div>
+
+<script src="/vendor/qrcode.min.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
