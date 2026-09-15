@@ -314,9 +314,11 @@ function wireAdmin() {
 /* ------------------------------------------------------------------
    QR-Code (bibliothèque servie depuis le site, pas depuis un CDN)
 ------------------------------------------------------------------ */
+const CANONICAL_URL = "https://cartecafedate.vercel.app/";
+
 function publicUrl() {
-  return location.href.split("#")[0];
-}
+  return CANONICAL_URL;
+   }
 
 function makeQR() {
   const url = $("qrUrl").value.trim() || publicUrl();
